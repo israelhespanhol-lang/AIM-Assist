@@ -1,0 +1,45 @@
+// ====================================================================
+// GamepadEmulation Configuration (Xbox 360 Controller Remapper)
+// ====================================================================
+(
+    dispatcher: (
+        toggle_key: Grave,
+        excluded_keys: [
+            X, J, L, Z, LeftAlt, LeftShift, Tab
+        ],
+    ),
+    aiming: (
+        sensitivity: 1.15,
+        alt_sensitivity: 3.50,
+        ads_multiplier: 0.65,
+        yaw_multiplier: 1.00,
+        pitch_multiplier: 1.00,
+        invert_pitch: false,
+        anti_deadzone: 0.12,
+        curve_exponent: 1.10,
+        mouse_smoothing_level: 4,
+    ),
+    controls: (
+        alt_sensitivity_key: Some(X),
+        ads_button: Some(Right),
+        movement: (
+            forward: W,
+            backward: S,
+            left: A,
+            right: D,
+        ),
+    ),
+    tick_rate_hz: 250,
+    binds: {
+        Keyboard(Space): Button(A),
+        Keyboard(C): Button(B),
+        Keyboard(R): Button(X),
+        Keyboard(E): Button(Y),
+        Keyboard(LeftShift): Button(LeftThumb),
+        Keyboard(V): Button(RightThumb),
+        Keyboard(Q): Button(LeftShoulder),
+        Keyboard(F): Button(RightShoulder),
+        Mouse(Left): Button(RightTrigger),
+        Mouse(Right): Button(LeftTrigger),
+    },
+)

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GamepadEmulation Pro - Virtual Xbox 360 Remapper</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/src/style.css">
+</head>
+<body class="gamer-theme">
+  <!-- Background Glow & Grid Lines -->
+  <div class="bg-grid"></div>
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-emerald"></div>
+  <div class="ambient-glow glow-violet"></div>
+
+  <div id="app" class="app-container">
+    <!-- Top Gamer Navigation Bar -->
+    <header class="top-bar">
+      <div class="brand-section">
+        <div class="logo-badge">
+          <svg class="xbox-icon" viewBox="0 0 24 24" width="28" height="28">
+            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm3.84 3.76c1.17 1.17 1.96 2.66 2.27 4.29-1.39-.77-3.07-1.2-4.85-1.2-1.24 0-2.43.21-3.53.59.88-1.58 2.37-2.82 4.16-3.47.66-.24 1.34-.35 1.95-.21zM8.16 5.76c.61-.14 1.29-.03 1.95.21 1.79.65 3.28 1.89 4.16 3.47-1.1-.38-2.29-.59-3.53-.59-1.78 0-3.46.43-4.85 1.2.31-1.63 1.1-3.12 2.27-4.29zM4.15 12c0-1.89.65-3.63 1.74-5.02 1.48 1.25 3.32 2.05 5.35 2.26-2.14 2.32-3.44 5.38-3.64 8.71C5.64 16.51 4.15 14.43 4.15 12zm7.85 7.85c-1.34 0-2.61-.31-3.75-.86.2-3.05 1.39-5.83 3.33-7.98 1.94 2.15 3.13 4.93 3.33 7.98-1.14.55-2.41.86-3.75.86zm6.26-4.14c-.2-3.33-1.5-6.39-3.64-8.71 2.03-.21 3.87-1.01 5.35-2.26 1.09 1.39 1.74 3.13 1.74 5.02 0 2.43-1.49 4.51-3.45 5.95z"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <div class="brand-title">GAMEPAD<span class="highlight">EMU</span> <span class="version-tag">PRO v0.2.0</span></div>
+          <div class="brand-sub">Ultra-Low Latency Mouse & Keyboard to Xbox 360 Remapper</div>
+        </div>
+      </div>
+
+      <!-- Quick Telemetry & Status Badges -->
+      <div class="status-deck">
+        <div class="status-pill driver-status" id="status-vigem">
+          <span class="status-dot dot-green"></span>
+          <span class="status-label">ViGEmBus:</span>
+          <span class="status-val">CONECTADO</span>
+        </div>
+        <div class="status-pill driver-status" id="status-interception">
+          <span class="status-dot dot-green"></span>
+          <span class="status-label">Interception:</span>
+          <span class="status-val">ATIVO</span>
+        </div>
+        <div class="status-pill latency-status">
+          <span class="status-icon">⚡</span>
+          <span class="status-label">Tick Rate:</span>
+          <span class="status-val" id="telemetry-tickrate">250Hz (4ms)</span>
+        </div>
+      </div>
+
+      <!-- Master Power Switch -->
+      <div class="master-switch-wrapper">
+        <button id="btn-master-toggle" class="master-toggle-btn active" title="Pressione a tecla Grave [ ` ] para alternar">
+          <div class="power-glow"></div>
+          <div class="power-icon">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/>
+            </svg>
+          </div>
+          <div class="power-text">
+            <span class="power-state" id="master-state-text">EMULAÇÃO ONLINE</span>
+            <span class="power-hint">Tecla de Alternância: <strong id="toggle-key-display">` (Grave)</strong></span>
+          </div>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Navigation Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-overview">
+        <span class="tab-icon">🎮</span>
+        <span class="tab-text">Painel do Controle</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-aim-trainer">
+        <span class="tab-icon">🎯</span>
+        <span class="tab-text">Aim Trainer 3D</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-aiming">
+        <span class="tab-icon">📈</span>
+        <span class="tab-text">Mira & Curvas</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-binds">
+        <span class="tab-icon">⌨️</span>
+        <span class="tab-text">Mapeamento de Teclas</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-profiles">
+        <span class="tab-icon">📁</span>
+        <span class="tab-text">Perfis de Jogos</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-settings">
+        <span class="tab-icon">⚙️</span>
+        <span class="tab-text">Configurações Gerais</span>
+      </button>
+    </nav>
+
+    <!-- Tab Content Area -->
+    <main class="content-body">
+
+      <!-- ================= TAB 1: OVERVIEW & CONTROLLER VISUALIZER ================= -->
+      <section id="tab-overview" class="tab-pane active">
+        <div class="overview-grid">
+          <!-- Left Column: Interactive Xbox 360 SVG Visualizer -->
+          <div class="card controller-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge">LIVE</span>
+                <h3>Visualizador Xbox One / Series X em Tempo Real</h3>
+              </div>
+              <div class="mode-badges">
+                <span id="badge-ads" class="mode-badge">ADS: INATIVO</span>
+                <span id="badge-alt-sens" class="mode-badge">MODO ALT / PARAQUEDAS: OFF</span>
+              </div>
+            </div>
+
+            <div class="controller-stage" id="controller-stage">
+              <!-- SVG Controller rendered here dynamically by controller.js -->
+            </div>
+
+            <!-- Real-time Analog & Trigger Gauges -->
+            <div class="analog-gauges">
+              <div class="gauge-box">
+                <div class="gauge-title">Gatilho Esquerdo (LT)</div>
+                <div class="gauge-bar-bg">
+                  <div id="gauge-lt" class="gauge-bar-fill fill-cyan" style="width: 0%;"></div>
+                </div>
+                <span id="val-lt" class="gauge-val">0</span>
+              </div>
+              <div class="gauge-box">
+                <div class="gauge-title">Gatilho Direito (RT)</div>
+                <div class="gauge-bar-bg">
+                  <div id="gauge-rt" class="gauge-bar-fill fill-orange" style="width: 0%;"></div>
+                </div>
+                <span id="val-rt" class="gauge-val">0</span>
+              </div>
+              <div class="gauge-box">
+                <div class="gauge-title">Analógico Esq (WASD)</div>
+                <div class="stick-coords"><span id="val-lx">LX: 0</span> | <span id="val-ly">LY: 0</span></div>
+              </div>
+              <div class="gauge-box">
+                <div class="gauge-title">Analógico Dir (Mira Mouse)</div>
+                <div class="stick-coords"><span id="val-rx">RX: 0</span> | <span id="val-ry">RY: 0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Quick Tweak Controls -->
+          <div class="card quick-tweaks-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge cyan">PRESETS RÁPIDOS</span>
+                <h3>Ajustes em Destaque</h3>
+              </div>
+            </div>
+
+            <div class="quick-controls-list">
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span class="slider-title">Sensibilidade Base da Mira</span>
+                  <span class="slider-value" id="quick-sens-val">1.00</span>
+                </div>
+                <input type="range" id="quick-sens" min="0.1" max="10.0" step="0.05" value="1.0" class="gamer-slider">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span class="slider-title">Multiplicador ADS (Botão Direito)</span>
+                  <span class="slider-value" id="quick-ads-val">0.75x</span>
+                </div>
+                <input type="range" id="quick-ads" min="0.1" max="2.0" step="0.05" value="0.75" class="gamer-slider">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span class="slider-title">Anti-Deadzone (Compensação de Jogo)</span>
+                  <span class="slider-value" id="quick-deadzone-val">10%</span>
+                </div>
+                <input type="range" id="quick-deadzone" min="0.0" max="0.30" step="0.01" value="0.10" class="gamer-slider">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span class="slider-title">Sensibilidade Modo Alternativo (Tecla X)</span>
+                  <span class="slider-value" id="quick-alt-sens-val">3.00</span>
+                </div>
+                <input type="range" id="quick-alt-sens" min="0.5" max="15.0" step="0.1" value="3.0" class="gamer-slider">
+              </div>
+
+              <div class="quick-actions-box">
+                <button id="btn-quick-save" class="btn btn-primary">
+                  <span class="btn-icon">💾</span> Salvar em Settings.ron
+                </button>
+                <button id="btn-quick-reset" class="btn btn-secondary">
+                  <span class="btn-icon">🔄</span> Restaurar Padrão
+                </button>
+              </div>
+
+              <div class="tips-box">
+                <div class="tip-title">💡 Dica Pro de Precisão:</div>
+                <p>O <strong>Anti-Deadzone</strong> de <code>0.10 (10%)</code> remove a zona morta estática de jogos de tiro (CoD, Apex, Halo). Se você sentir que a mira treme parada, reduza para <code>0.06</code>. Se a mira demorar para responder a movimentos leves, aumente para <code>0.12</code>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: AIM TRAINER 3D & SHOOTING RANGE ================= -->
+      <section id="tab-aim-trainer" class="tab-pane">
+        <div class="trainer-layout">
+          <!-- Main Shooting Range 3D Viewport -->
+          <div class="card trainer-viewport-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge emerald">3D FPS ARENA</span>
+                <h3>Campo de Treino de Mira & Precisão</h3>
+              </div>
+              <div class="trainer-modes-bar">
+                <button class="trainer-mode-btn active" data-mode="gridshot">⚡ Reflexo / Gridshot</button>
+                <button class="trainer-mode-btn" data-mode="tracking">🎯 Rastreamento / Tracking</button>
+                <button class="trainer-mode-btn" data-mode="precision">🔬 Micro-Ajuste / Precisão</button>
+              </div>
+            </div>
+
+            <div class="trainer-canvas-container">
+              <canvas id="aim-trainer-canvas" width="840" height="460"></canvas>
+            </div>
+
+            <!-- In-Game Live HUD Counters -->
+            <div class="trainer-hud-bar">
+              <div class="hud-stat-box">
+                <span class="hud-label">Pontuação</span>
+                <span class="hud-value" id="trainer-score">0</span>
+              </div>
+              <div class="hud-stat-box">
+                <span class="hud-label">Precisão</span>
+                <span class="hud-value text-cyan" id="trainer-accuracy">100%</span>
+              </div>
+              <div class="hud-stat-box">
+                <span class="hud-label">Acertos / Tiros</span>
+                <span class="hud-value text-emerald" id="trainer-hits">0 / 0</span>
+              </div>
+              <div class="hud-stat-box">
+                <span class="hud-label">Tempo Restante</span>
+                <span class="hud-value text-orange" id="trainer-time">60s</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Sidebar: Controls & Calibration -->
+          <div class="card trainer-sidebar-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge cyan">CONTROLE</span>
+                <h3>Sessão de Treinamento</h3>
+              </div>
+            </div>
+
+            <div class="trainer-controls-body">
+              <button id="btn-trainer-start" class="btn btn-primary btn-block btn-lg">
+                ▶️ Iniciar Treino (60s)
+              </button>
+
+              <div class="trainer-info-panel">
+                <div class="panel-heading">🎮 Instruções de Mira:</div>
+                <ul class="trainer-instructions-list">
+                  <li><strong>Mirar com o Controle / Mouse:</strong> Analógico Direito ou mouse dentro do canvas.</li>
+                  <li><strong>Disparar / Atirar:</strong> Gatilho <code>RT</code> (Right Trigger) ou Clique Esquerdo.</li>
+                  <li><strong>Modo ADS (Zoom / Mira de Precisão):</strong> Segure o Gatilho <code>LT</code> (Right Mouse).</li>
+                  <li><strong>Ativar Emulação Global:</strong> Pressione a tecla <code>\` (Grave)</code>.</li>
+                </ul>
+              </div>
+
+              <div class="trainer-quick-sliders">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Sensibilidade Atual</span>
+                    <span class="slider-value" id="trainer-sens-val">1.00</span>
+                  </div>
+                  <input type="range" id="trainer-sens" min="0.1" max="10.0" step="0.05" value="1.0" class="gamer-slider">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Anti-Deadzone</span>
+                    <span class="slider-value" id="trainer-deadzone-val">10%</span>
+                  </div>
+                  <input type="range" id="trainer-deadzone" min="0.0" max="0.30" step="0.01" value="0.10" class="gamer-slider">
+                </div>
+
+                <div class="trainer-checkboxes" style="margin-top: 10px; display: flex; flex-direction: column; gap: 8px;">
+                  <label class="gamer-checkbox">
+                    <input type="checkbox" id="trainer-invert-pitch">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Inverter Eixo Y (Vertical / Pitch)</span>
+                  </label>
+                  <label class="gamer-checkbox">
+                    <input type="checkbox" id="trainer-invert-yaw">
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">Inverter Eixo X (Horizontal / Yaw)</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="tips-box">
+                <div class="tip-title">🎯 Dica de Teste:</div>
+                <p>Use o modo <strong>Micro-Ajuste</strong> para testar se pequenos movimentos do mouse movem a mira suavemente através do <strong>Anti-Deadzone</strong>.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: AIMING & RESPONSE CURVES ================= -->
+      <section id="tab-aiming" class="tab-pane">
+        <div class="aiming-layout">
+          <!-- Left: Curve Canvas Graph -->
+          <div class="card curve-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge emerald">ALGORITMO</span>
+                <h3>Gráfico da Curva de Resposta & Deadzone</h3>
+              </div>
+              <div class="curve-legend">
+                <span class="legend-item"><span class="legend-dot dot-normal"></span> Normal</span>
+                <span class="legend-item"><span class="legend-dot dot-ads"></span> ADS</span>
+                <span class="legend-item"><span class="legend-dot dot-alt"></span> Alt/Paraquedas</span>
+              </div>
+            </div>
+
+            <div class="canvas-wrapper">
+              <canvas id="curve-canvas" width="600" height="340"></canvas>
+              <div class="canvas-crosshair-info">
+                <span>Entrada Mouse: <strong id="live-mouse-in">0.00</strong></span>
+                <span>Saída Stick: <strong id="live-stick-out">0.00</strong></span>
+              </div>
+            </div>
+
+            <div class="curve-presets">
+              <span class="preset-label">Curvas Pré-definidas:</span>
+              <button class="preset-btn active" data-curve="1.0">Linear (1.0)</button>
+              <button class="preset-btn" data-curve="1.2">Suave (1.2)</button>
+              <button class="preset-btn" data-curve="1.4">Dinâmica (1.4)</button>
+              <button class="preset-btn" data-curve="1.6">Exponencial (1.6)</button>
+            </div>
+          </div>
+
+          <!-- Right: Detailed Aiming Sliders -->
+          <div class="card aim-controls-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge cyan">PARÂMETROS</span>
+                <h3>Calibração da Mira</h3>
+              </div>
+            </div>
+
+            <div class="aim-sliders-container">
+              <div class="form-row">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Sensibilidade Base</span>
+                    <span class="slider-value" id="aim-sens-val">1.00</span>
+                  </div>
+                  <input type="range" id="aim-sens" min="0.1" max="10.0" step="0.05" value="1.0" class="gamer-slider">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Sensibilidade Alt (Paraquedas)</span>
+                    <span class="slider-value" id="aim-alt-sens-val">3.00</span>
+                  </div>
+                  <input type="range" id="aim-alt-sens" min="0.5" max="15.0" step="0.1" value="3.0" class="gamer-slider">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Multiplicador ADS (Ao Mirar)</span>
+                    <span class="slider-value" id="aim-ads-val">0.75x</span>
+                  </div>
+                  <input type="range" id="aim-ads" min="0.1" max="2.0" step="0.05" value="0.75" class="gamer-slider">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Expoente da Curva (Aceleração)</span>
+                    <span class="slider-value" id="aim-curve-val">1.00</span>
+                  </div>
+                  <input type="range" id="aim-curve" min="0.8" max="2.5" step="0.05" value="1.0" class="gamer-slider">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Anti-Deadzone (Offset Mínimo)</span>
+                    <span class="slider-value" id="aim-deadzone-val">0.10</span>
+                  </div>
+                  <input type="range" id="aim-deadzone" min="0.0" max="0.30" step="0.01" value="0.10" class="gamer-slider">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Janela de Suavização (Smoothing)</span>
+                    <span class="slider-value" id="aim-smoothing-val">5ms</span>
+                  </div>
+                  <input type="range" id="aim-smoothing" min="1" max="20" step="1" value="5" class="gamer-slider">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Multiplicador Eixo X (Yaw / Horizontal)</span>
+                    <span class="slider-value" id="aim-yaw-val">1.00x</span>
+                  </div>
+                  <input type="range" id="aim-yaw" min="0.1" max="3.0" step="0.05" value="1.0" class="gamer-slider">
+                </div>
+
+                <div class="slider-group">
+                  <div class="slider-header">
+                    <span class="slider-title">Multiplicador Eixo Y (Pitch / Vertical)</span>
+                    <span class="slider-value" id="aim-pitch-val">1.00x</span>
+                  </div>
+                  <input type="range" id="aim-pitch" min="0.1" max="3.0" step="0.05" value="1.0" class="gamer-slider">
+                </div>
+              </div>
+
+              <div class="checkbox-row">
+                <label class="gamer-checkbox">
+                  <input type="checkbox" id="aim-invert-pitch">
+                  <span class="checkmark"></span>
+                  <span class="checkbox-label">Inverter Eixo Y (Pitch Invertido / Modo Voo)</span>
+                </label>
+              </div>
+
+              <div class="actions-row">
+                <button id="btn-save-aiming" class="btn btn-primary btn-block">
+                  <span class="btn-icon">💾</span> Aplicar e Salvar Configurações de Mira
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: KEY BINDINGS & REMAPPER ================= -->
+      <section id="tab-binds" class="tab-pane">
+        <div class="binds-layout">
+          <!-- Movement & Special Controls -->
+          <div class="card binds-special-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge violet">MOVIMENTO</span>
+                <h3>Movimentação (Analógico Esquerdo)</h3>
+              </div>
+            </div>
+
+            <div class="wasd-remapper">
+              <div class="wasd-grid">
+                <div class="wasd-slot slot-up">
+                  <span class="slot-label">Frente</span>
+                  <button class="key-bind-btn" data-key-type="movement" data-key-target="forward" id="bind-mov-forward">W</button>
+                </div>
+                <div class="wasd-row">
+                  <div class="wasd-slot slot-left">
+                    <span class="slot-label">Esquerda</span>
+                    <button class="key-bind-btn" data-key-type="movement" data-key-target="left" id="bind-mov-left">A</button>
+                  </div>
+                  <div class="wasd-slot slot-down">
+                    <span class="slot-label">Trás</span>
+                    <button class="key-bind-btn" data-key-type="movement" data-key-target="backward" id="bind-mov-backward">S</button>
+                  </div>
+                  <div class="wasd-slot slot-right">
+                    <span class="slot-label">Direita</span>
+                    <button class="key-bind-btn" data-key-type="movement" data-key-target="right" id="bind-mov-right">D</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="special-triggers">
+                <div class="trigger-item">
+                  <div class="trigger-info">
+                    <span class="trigger-name">Botão de Ativação ADS (Mira)</span>
+                    <span class="trigger-desc">Aciona o multiplicador de mira</span>
+                  </div>
+                  <select id="bind-ads-button" class="gamer-select">
+                    <option value="Right">Botão Direito do Mouse</option>
+                    <option value="Left">Botão Esquerdo do Mouse</option>
+                    <option value="Middle">Botão do Meio (Scroll Click)</option>
+                    <option value="Button4">Botão Lateral 4</option>
+                    <option value="Button5">Botão Lateral 5</option>
+                    <option value="None">Nenhum</option>
+                  </select>
+                </div>
+
+                <div class="trigger-item">
+                  <div class="trigger-info">
+                    <span class="trigger-name">Tecla Modo Alt / Paraquedas</span>
+                    <span class="trigger-desc">Alterna sensibilidade instantânea</span>
+                  </div>
+                  <button class="key-bind-btn" id="bind-alt-key">X</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Full Controller Binds Table -->
+          <div class="card binds-table-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge orange">MAPPER</span>
+                <h3>Atribuição de Botões do Xbox 360</h3>
+              </div>
+              <div class="header-actions">
+                <button id="btn-add-bind" class="btn btn-sm btn-outline">+ Adicionar Mapeamento</button>
+              </div>
+            </div>
+
+            <div class="binds-table-wrapper">
+              <table class="gamer-table">
+                <thead>
+                  <tr>
+                    <th>Entrada (Teclado / Mouse)</th>
+                    <th>Ação no Xbox 360</th>
+                    <th>Operações</th>
+                  </tr>
+                </thead>
+                <tbody id="binds-table-body">
+                  <!-- Generated dynamically by app.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <div class="table-actions">
+              <button id="btn-save-binds" class="btn btn-primary">
+                <span class="btn-icon">💾</span> Salvar Mapeamentos
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: PROFILES ================= -->
+      <section id="tab-profiles" class="tab-pane">
+        <div class="profiles-layout">
+          <div class="card profiles-list-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge green">PRESETS</span>
+                <h3>Perfis de Jogos Salvos</h3>
+              </div>
+              <div class="header-actions">
+                <button id="btn-new-profile" class="btn btn-sm btn-primary">+ Novo Perfil</button>
+              </div>
+            </div>
+
+            <div class="profiles-grid" id="profiles-grid">
+              <!-- Dynamically populated profiles -->
+            </div>
+          </div>
+
+          <div class="card profile-info-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge cyan">DETALHES</span>
+                <h3 id="selected-profile-name">Perfil: Padrão (Settings.ron)</h3>
+              </div>
+            </div>
+
+            <div class="profile-details-content">
+              <div class="profile-meta-box">
+                <div class="meta-row">
+                  <span class="meta-label">Arquivo de Origem:</span>
+                  <span class="meta-val" id="profile-path-display">Settings.ron</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Sensibilidade:</span>
+                  <span class="meta-val" id="profile-sens-display">1.00 (ADS: 0.75x)</span>
+                </div>
+                <div class="meta-row">
+                  <span class="meta-label">Anti-Deadzone:</span>
+                  <span class="meta-val" id="profile-deadzone-display">10%</span>
+                </div>
+              </div>
+
+              <div class="profile-actions-box">
+                <button id="btn-activate-profile" class="btn btn-primary btn-block">
+                  <span class="btn-icon">⚡</span> Ativar Este Perfil Agora
+                </button>
+                <button id="btn-duplicate-profile" class="btn btn-secondary btn-block">
+                  <span class="btn-icon">📋</span> Duplicar Perfil
+                </button>
+                <button id="btn-export-ron" class="btn btn-outline btn-block">
+                  <span class="btn-icon">📤</span> Exportar Arquivo .RON
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= TAB 5: GENERAL SETTINGS ================= -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="settings-layout">
+          <div class="card general-settings-card">
+            <div class="card-header">
+              <div class="header-title">
+                <span class="card-badge violet">SISTEMA</span>
+                <h3>Configurações de Execução e Interceptação</h3>
+              </div>
+            </div>
+
+            <div class="settings-form">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <span class="setting-title">Taxa de Atualização do Controle (Tick Rate)</span>
+                  <span class="setting-desc">Frequência em Hz do loop de envio para o ViGEmBus. Padrão recomendado: 250Hz.</span>
+                </div>
+                <div class="setting-control">
+                  <select id="set-tick-rate" class="gamer-select">
+                    <option value="125">125 Hz (8.0ms) - Ultra Leve</option>
+                    <option value="250" selected>250 Hz (4.0ms) - Recomendado</option>
+                    <option value="500">500 Hz (2.0ms) - Competitivo</option>
+                    <option value="1000">1000 Hz (1.0ms) - Extremo</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <span class="setting-title">Tecla Mestre de Ativação (Toggle Key)</span>
+                  <span class="setting-desc">Tecla usada para ligar/desligar a emulação em segundo plano durante os jogos.</span>
+                </div>
+                <div class="setting-control">
+                  <button id="btn-toggle-key-select" class="key-bind-btn">Grave (`)</button>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <span class="setting-title">Teclas Excluídas da Interceptação (Pass-Through)</span>
+                  <span class="setting-desc">Teclas que sempre passam direto para o Windows mesmo com a emulação ligada.</span>
+                </div>
+                <div class="setting-control">
+                  <input type="text" id="set-excluded-keys" class="gamer-input" value="X, J, L, Z, LeftAlt, LeftShift, Tab" placeholder="Ex: X, Tab, LeftAlt">
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-info">
+                  <span class="setting-title">Desconexão Limpa do Controle Virtual</span>
+                  <span class="setting-desc">Desanexa o controle do barramento ViGEm automaticamente ao encerrar o aplicativo.</span>
+                </div>
+                <div class="setting-control">
+                  <label class="gamer-checkbox">
+                    <input type="checkbox" id="set-clean-disconnect" checked disabled>
+                    <span class="checkmark"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="actions-row">
+                <button id="btn-save-general" class="btn btn-primary">
+                  <span class="btn-icon">💾</span> Salvar Configurações Gerais
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Status Bar -->
+    <footer class="bottom-bar">
+      <div class="bottom-left">
+        <span class="pulse-indicator"></span>
+        <span class="status-text" id="bottom-status-text">Pronto para jogar. Emulação operacional.</span>
+      </div>
+      <div class="bottom-right">
+        <span class="cpu-stat">CPU: <strong>&lt; 0.1%</strong></span>
+        <span class="divider">|</span>
+        <span class="version-stat">GamepadEmulation v0.2.0</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Key Listener Modal -->
+  <div id="key-modal" class="modal-backdrop hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4>Pressione a tecla ou botão desejado</h4>
+      </div>
+      <div class="modal-body">
+        <div class="key-pulse-circle">
+          <span class="key-pulse-icon">⌨️ / 🖱️</span>
+        </div>
+        <p class="modal-desc">Aguardando entrada do teclado ou clique do mouse...</p>
+        <div class="detected-key-preview" id="modal-detected-key">---</div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-cancel-modal" class="btn btn-secondary">Cancelar (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>
