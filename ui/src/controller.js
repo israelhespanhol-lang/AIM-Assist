@@ -1,6 +1,4 @@
-/**
- * Photorealistic Shock Blue Xbox Controller Visualizer & Real-time Telemetry
- */
+import xboxControllerImg from './xbox_controller.png';
 
 export class XboxControllerRenderer {
   constructor(containerId) {
@@ -44,7 +42,7 @@ export class XboxControllerRenderer {
 
     this.container.innerHTML = `
       <div class="controller-visualizer-wrapper" style="position: relative; width: 100%; max-width: 620px; margin: 0 auto;">
-        <svg class="xbox-svg" viewBox="0 0 1000 670" style="width: 100%; height: auto; display: block;" xmlns="http://www.w3.org/2000/svg">
+        <svg class="xbox-svg" viewBox="0 0 1000 670" style="width: 100%; height: auto; display: block;" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
           <defs>
             <!-- Glow Filters -->
             <filter id="glowCyan" x="-40%" y="-40%" width="180%" height="180%">
@@ -89,7 +87,7 @@ export class XboxControllerRenderer {
           </defs>
 
           <!-- Photorealistic Base Controller Render -->
-          <image href="/xbox_controller.png" x="0" y="0" width="1000" height="670" />
+          <image href="${xboxControllerImg}" xlink:href="${xboxControllerImg}" x="0" y="0" width="1000" height="670" />
 
           <!-- ================= INTERACTIVE GLOW OVERLAYS ================= -->
 
