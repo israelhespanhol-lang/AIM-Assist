@@ -121,10 +121,10 @@ export class AimCurveRenderer {
 
     // Deadzone shaded area (game deadzone threshold)
     const deadzoneY = paddingTop + graphH - p.antiDeadzone * graphH;
-    ctx.fillStyle = 'rgba(255, 94, 58, 0.08)';
+    ctx.fillStyle = 'rgba(0, 229, 255, 0.05)';
     ctx.fillRect(paddingLeft, deadzoneY, graphW, p.antiDeadzone * graphH);
 
-    ctx.strokeStyle = 'rgba(255, 94, 58, 0.4)';
+    ctx.strokeStyle = 'rgba(0, 229, 255, 0.25)';
     ctx.setLineDash([4, 4]);
     ctx.beginPath();
     ctx.moveTo(paddingLeft, deadzoneY);
@@ -132,19 +132,19 @@ export class AimCurveRenderer {
     ctx.stroke();
     ctx.setLineDash([]);
 
-    ctx.fillStyle = '#ff5e3a';
+    ctx.fillStyle = '#64748b';
     ctx.font = '10px "JetBrains Mono", monospace';
     ctx.textAlign = 'left';
-    ctx.fillText(`Anti-Deadzone (${(p.antiDeadzone * 100).toFixed(0)}%)`, paddingLeft + 10, deadzoneY - 6);
+    ctx.fillText(`Deadzone: ${(p.antiDeadzone * 100).toFixed(0)}%`, paddingLeft + 10, deadzoneY - 6);
 
-    // 1. Draw Alt / Parachute Curve (Orange)
-    this.plotCurve(ctx, paddingLeft, paddingTop, graphW, graphH, p.altSensitivity, 1.0, false, p.antiDeadzone, p.curveExponent, '#ff5e3a', 1.5, [2, 2]);
+    // 1. Draw Alt / Parachute Curve (Subtle Slate)
+    this.plotCurve(ctx, paddingLeft, paddingTop, graphW, graphH, p.altSensitivity, 1.0, false, p.antiDeadzone, p.curveExponent, '#64748b', 1.2, [2, 2]);
 
-    // 2. Draw ADS Curve (Emerald Green)
-    this.plotCurve(ctx, paddingLeft, paddingTop, graphW, graphH, p.sensitivity, p.adsMultiplier, true, p.antiDeadzone, p.curveExponent, '#00ff9d', 2.0);
+    // 2. Draw ADS Curve (Precision Blue)
+    this.plotCurve(ctx, paddingLeft, paddingTop, graphW, graphH, p.sensitivity, p.adsMultiplier, true, p.antiDeadzone, p.curveExponent, '#3b82f6', 1.8);
 
-    // 3. Draw Normal Base Curve (Cyan)
-    this.plotCurve(ctx, paddingLeft, paddingTop, graphW, graphH, p.sensitivity, 1.0, false, p.antiDeadzone, p.curveExponent, '#00f0ff', 2.5);
+    // 3. Draw Normal Base Curve (Clean Signature Cyan)
+    this.plotCurve(ctx, paddingLeft, paddingTop, graphW, graphH, p.sensitivity, 1.0, false, p.antiDeadzone, p.curveExponent, '#00e5ff', 2.2);
 
     // Live Tracking Point
     if (this.livePoint && this.livePoint.in > 0) {
@@ -152,10 +152,10 @@ export class AimCurveRenderer {
       const ptY = paddingTop + graphH - Math.min(1.0, this.livePoint.out) * graphH;
 
       ctx.fillStyle = '#ffffff';
-      ctx.shadowColor = '#00f0ff';
-      ctx.shadowBlur = 12;
+      ctx.shadowColor = '#00e5ff';
+      ctx.shadowBlur = 10;
       ctx.beginPath();
-      ctx.arc(ptX, ptY, 6, 0, Math.PI * 2);
+      ctx.arc(ptX, ptY, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
     }
